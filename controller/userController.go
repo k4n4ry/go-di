@@ -34,7 +34,6 @@ func (ctl *userController) GetUser(c echo.Context) error {
 	id := c.Param("id")
 	idInt, _ := strconv.Atoi(id)
 	name, _ := ctl.svc.GetUserName(idInt)
-	// 一旦こういうふうに実装しているけど、controllerがServiceを直接呼び出す
 
 	return c.String(http.StatusOK, name)
 }

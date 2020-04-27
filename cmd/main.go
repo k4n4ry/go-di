@@ -5,12 +5,8 @@ import (
 
 	"github.com/knry0329/go-di/config"
 
-	"github.com/knry0329/go-di/repository"
-	"github.com/knry0329/go-di/service"
-
 	"github.com/knry0329/go-di/db"
 
-	"github.com/knry0329/go-di/controller"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -23,6 +19,11 @@ https://recruit-tech.co.jp/blog/2018/12/02/go_after_one_year_from_the_start/
 ・mainからインジェクションするか、コンテナインスタンスを作ってみる(ライブラリがあれば、使ってみる)
 ・digってやつが良さそう?
 */
+
+/*
+・テスト書いてみて、DIの良さを確認する。
+・DIコンテナのライブラリ使ってみる。
+*/
 func main() {
 	// db初期化
 	if err := db.GormConnect(config.DbConfig{
@@ -33,10 +34,11 @@ func main() {
 	}
 
 	// constructor injection
-	r := repository.NewUserRepository()
-	s := service.NewUserService(r)
-	ctl := controller.NewUserController(s)
-	// controller.NewUserController(s)
+	// r := repository.NewUserRepository()
+	// s := service.NewUserService(r)
+	// c := controller.NewUserController(s)
+
+	c := initializeUser()
 
 	// Echo instance
 	e := echo.New()
@@ -47,7 +49,7 @@ func main() {
 
 	// Routes
 	e.GET("/", hello)
-	e.GET("/users/:id", ctl.GetUser)
+	e.GET("/users/:id", c.GetUser)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1333"))
