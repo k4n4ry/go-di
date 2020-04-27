@@ -3,6 +3,7 @@ package db
 import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/knry0329/go-di/config"
 )
 
 type dbUtil struct {
@@ -15,8 +16,8 @@ var dbInstance = &dbUtil{}
 // 	return &DbUtil{}
 // }
 
-func GormConnect(dbms string, dsn string) error {
-	db, err := gorm.Open(dbms, dsn)
+func GormConnect(cfg config.DbConfig) error {
+	db, err := gorm.Open(cfg.Dbms, cfg.Dsn)
 	if err != nil {
 		return err
 	}
