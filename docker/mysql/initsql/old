@@ -1,0 +1,216 @@
+DROP TABLE IF EXISTS cpstandard_m_reply;
+DROP TABLE IF EXISTS cpstandard_m_insentive_detail;
+DROP TABLE IF EXISTS cpstandard_t_lottery_history;
+DROP TABLE IF EXISTS cpstandard_t_mileage_user_history;
+DROP TABLE IF EXISTS cpstandard_m_mileage_user;
+DROP TABLE IF EXISTS cpstandard_c_account_mail;
+DROP TABLE IF EXISTS cpstandard_m_serial;
+DROP TABLE IF EXISTS cpstandard_t_file_status;
+DROP TABLE IF EXISTS cpstandard_m_campaign_template;
+DROP TABLE IF EXISTS cpstandard_m_insentive;
+DROP TABLE IF EXISTS cpstandard_m_campaign;
+
+CREATE TABLE cpstandard_c_account_mail (
+ acid VARCHAR(16) NOT NULL,
+ mail_pattern CHAR(2) NOT NULL,
+ mail_to VARCHAR(255) NOT NULL,
+ title VARCHAR(255) NOT NULL,
+ contents VARCHAR(4096) NOT NULL,
+ create_datetime DATETIME,
+ create_id BIGINT,
+ update_datetime DATETIME,
+ update_id BIGINT
+);
+
+ALTER TABLE cpstandard_c_account_mail ADD CONSTRAINT PK_cpstandard_c_account_mail PRIMARY KEY (acid,mail_pattern);
+
+
+CREATE TABLE cpstandard_m_campaign (
+ cpid VARCHAR(128) NOT NULL,
+ campaign_name VARCHAR(255) NOT NULL,
+ acid VARCHAR(16) NOT NULL,
+ campaign_start DATETIME,
+ campaign_end DATETIME,
+ disable_flg CHAR(1),
+ serial_digits SMALLINT,
+ serial_prefix CHAR(4),
+ create_datetime DATETIME,
+ create_id BIGINT,
+ update_datetime DATETIME,
+ update_id BIGINT
+);
+
+ALTER TABLE cpstandard_m_campaign ADD CONSTRAINT PK_cpstandard_m_campaign PRIMARY KEY (cpid);
+
+
+CREATE TABLE cpstandard_t_file_status (
+ file_id BIGINT NOT NULL,
+ file_pattern CHAR(2),
+ file_name VARCHAR(255) NOT NULL,
+ file_url VARCHAR(2048),
+ status CHAR(2) NOT NULL,
+ cpid VARCHAR(128) NOT NULL,
+ create_datetime DATETIME,
+ create_id BIGINT,
+ update_datetime DATETIME,
+ update_id BIGINT
+);
+
+ALTER TABLE cpstandard_t_file_status ADD CONSTRAINT PK_cpstandard_t_file_status PRIMARY KEY (file_id);
+
+
+CREATE TABLE cpstandard_m_mileage_user (
+ cpid VARCHAR(128) NOT NULL,
+ uid VARCHAR(255) NOT NULL,
+ total_point INT,
+ create_datetime DATETIME,
+ create_id BIGINT,
+ update_datetime DATETIME,
+ update_id BIGINT
+);
+
+ALTER TABLE cpstandard_m_mileage_user ADD CONSTRAINT PK_cpstandard_m_mileage_user PRIMARY KEY (cpid,uid);
+
+
+CREATE TABLE cpstandard_t_mileage_user_history (
+ cpid VARCHAR(128) NOT NULL,
+ uid VARCHAR(255) NOT NULL,
+ sequence_no BIGINT NOT NULL,
+ point_diff SMALLINT,
+ tran_datetime DATETIME,
+ create_datetime DATETIME,
+ create_id BIGINT,
+ update_datetime DATETIME,
+ update_id BIGINT
+);
+
+ALTER TABLE cpstandard_t_mileage_user_history ADD CONSTRAINT PK_cpstandard_t_mileage_user_history PRIMARY KEY (cpid,uid,sequence_no);
+
+
+CREATE TABLE cpstandard_m_reply (
+ cpid VARCHAR(128) NOT NULL,
+ point_from SMALLINT NOT NULL,
+ squence_no BIGINT NOT NULL,
+ reply_pattern CHAR(2),
+ reply_message VARCHAR(2048),
+ create_datetime DATETIME,
+ create_id BIGINT,
+ update_datetime DATETIME,
+ update_id BIGINT
+);
+
+ALTER TABLE cpstandard_m_reply ADD CONSTRAINT PK_cpstandard_m_reply PRIMARY KEY (cpid,point_from,squence_no);
+
+
+CREATE TABLE cpstandard_m_insentive (
+ cpid VARCHAR(128) NOT NULL,
+ incentive_no SMALLINT NOT NULL,
+ incentive_name VARCHAR(255),
+ need_point INT,
+ winning_rate DECIMAL(6,3),
+ create_datetime DATETIME,
+ create_id BIGINT,
+ update_datetime DATETIME,
+ update_id BIGINT
+);
+
+ALTER TABLE cpstandard_m_insentive ADD CONSTRAINT PK_cpstandard_m_insentive PRIMARY KEY (cpid,incentive_no);
+
+
+CREATE TABLE cpstandard_m_insentive_detail (
+ cpid VARCHAR(128) NOT NULL,
+ incentive_no SMALLINT NOT NULL,
+ sequence_no BIGINT NOT NULL,
+ incentive_url VARCHAR(2048),
+ disable_flg CHAR(1),
+ winning_uid VARCHAR(255),
+ winning_datetime DATETIME,
+ create_datetime DATETIME,
+ create_id BIGINT,
+ update_datetime DATETIME,
+ update_id BIGINT,
+ file_id BIGINT
+);
+
+ALTER TABLE cpstandard_m_insentive_detail ADD CONSTRAINT PK_cpstandard_m_insentive_detail PRIMARY KEY (cpid,incentive_no,sequence_no);
+
+
+CREATE TABLE cpstandard_m_campaign_template (
+ cpid VARCHAR(128) NOT NULL,
+ template_pattern CHAR(2) NOT NULL,
+ sequence_no BIGINT NOT NULL,
+ template_contents_pattern CHAR(2),
+ template VARCHAR(2048),
+ create_datetime DATETIME,
+ create_id BIGINT,
+ update_datetime DATETIME,
+ update_id BIGINT
+);
+
+ALTER TABLE cpstandard_m_campaign_template ADD CONSTRAINT PK_cpstandard_m_campaign_template PRIMARY KEY (cpid,template_pattern,sequence_no);
+
+
+CREATE TABLE cpstandard_m_serial (
+ acid DATETIME NOT NULL,
+ serial_code VARCHAR(128) NOT NULL,
+ cpid VARCHAR(128) NOT NULL,
+ point SMALLINT NOT NULL,
+ disable_flg CHAR(1) NOT NULL,
+ used_uid VARCHAR(255),
+ used_datetime DATETIME,
+ file_id BIGINT NOT NULL,
+ create_datetime DATETIME,
+ create_id BIGINT,
+ update_datetime DATETIME,
+ update_id BIGINT
+);
+
+ALTER TABLE cpstandard_m_serial ADD CONSTRAINT PK_cpstandard_m_serial PRIMARY KEY (acid,serial_code);
+
+
+CREATE TABLE cpstandard_t_lottery_history (
+ cpid VARCHAR(128) NOT NULL,
+ uid VARCHAR(255) NOT NULL,
+ sequence_no BIGINT NOT NULL,
+ incentive_no SMALLINT NOT NULL,
+ winning_flg CHAR(1),
+ lottery_datetime DATETIME,
+ create_datetime DATETIME,
+ create_id BIGINT,
+ update_datetime DATETIME,
+ update_id BIGINT
+);
+
+ALTER TABLE cpstandard_t_lottery_history ADD CONSTRAINT PK_cpstandard_t_lottery_history PRIMARY KEY (cpid,uid,sequence_no);
+
+
+ALTER TABLE cpstandard_t_file_status ADD CONSTRAINT FK_cpstandard_t_file_status_0 FOREIGN KEY (cpid) REFERENCES cpstandard_m_campaign (cpid);
+
+
+ALTER TABLE cpstandard_m_mileage_user ADD CONSTRAINT FK_cpstandard_m_mileage_user_0 FOREIGN KEY (cpid) REFERENCES cpstandard_m_campaign (cpid);
+
+
+ALTER TABLE cpstandard_t_mileage_user_history ADD CONSTRAINT FK_cpstandard_t_mileage_user_history_0 FOREIGN KEY (cpid,uid) REFERENCES cpstandard_m_mileage_user (cpid,uid);
+
+
+ALTER TABLE cpstandard_m_reply ADD CONSTRAINT FK_cpstandard_m_reply_0 FOREIGN KEY (cpid) REFERENCES cpstandard_m_campaign (cpid);
+
+
+ALTER TABLE cpstandard_m_insentive ADD CONSTRAINT FK_cpstandard_m_insentive_0 FOREIGN KEY (cpid) REFERENCES cpstandard_m_campaign (cpid);
+
+
+ALTER TABLE cpstandard_m_insentive_detail ADD CONSTRAINT FK_cpstandard_m_insentive_detail_0 FOREIGN KEY (cpid,incentive_no) REFERENCES cpstandard_m_insentive (cpid,incentive_no);
+ALTER TABLE cpstandard_m_insentive_detail ADD CONSTRAINT FK_cpstandard_m_insentive_detail_1 FOREIGN KEY (file_id) REFERENCES cpstandard_t_file_status (file_id);
+
+
+ALTER TABLE cpstandard_m_campaign_template ADD CONSTRAINT FK_cpstandard_m_campaign_template_0 FOREIGN KEY (cpid) REFERENCES cpstandard_m_campaign (cpid);
+
+
+ALTER TABLE cpstandard_m_serial ADD CONSTRAINT FK_cpstandard_m_serial_0 FOREIGN KEY (cpid) REFERENCES cpstandard_m_campaign (cpid);
+ALTER TABLE cpstandard_m_serial ADD CONSTRAINT FK_cpstandard_m_serial_1 FOREIGN KEY (file_id) REFERENCES cpstandard_t_file_status (file_id);
+
+
+ALTER TABLE cpstandard_t_lottery_history ADD CONSTRAINT FK_cpstandard_t_lottery_history_0 FOREIGN KEY (cpid,uid) REFERENCES cpstandard_m_mileage_user (cpid,uid);
+ALTER TABLE cpstandard_t_lottery_history ADD CONSTRAINT FK_cpstandard_t_lottery_history_1 FOREIGN KEY (incentive_no,cpid) REFERENCES cpstandard_m_insentive (incentive_no,cpid);
+
+
