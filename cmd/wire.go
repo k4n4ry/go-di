@@ -18,3 +18,12 @@ func initializeUser() controller.UserController {
 	)
 	return nil
 }
+
+func initializeFile() controller.FileController {
+	wire.Build(
+		repository.NewFileRepository,
+		service.NewFileService,
+		controller.NewFileController,
+	)
+	return nil
+}
