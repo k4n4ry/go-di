@@ -38,7 +38,7 @@ func main() {
 	// s := service.NewUserService(r)
 	// c := controller.NewUserController(s)
 
-	c := initializeUser()
+	// c := initializeUser()
 
 	// Echo instance
 	e := echo.New()
@@ -49,7 +49,8 @@ func main() {
 
 	// Routes
 	e.GET("/", hello)
-	e.GET("/users/:id", c.GetUser)
+	e.GET("/users/:id", initializeUser().GetUser)
+	e.GET("/file/:bucket", initializeFile().GetFile)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1333"))

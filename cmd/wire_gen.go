@@ -19,3 +19,10 @@ func initializeUser() controller.UserController {
 	userController := controller.NewUserController(userService)
 	return userController
 }
+
+func initializeFile() controller.FileController {
+	fileRepository := repository.NewFileRepository()
+	fileService := service.NewFileService(fileRepository)
+	fileController := controller.NewFileController(fileService)
+	return fileController
+}
