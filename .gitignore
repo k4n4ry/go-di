@@ -2,3 +2,4 @@ docker/mysql/data/
 go-di
 .DS_Store
 .env
+test.log

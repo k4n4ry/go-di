@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/knry0329/go-di/config"
 
@@ -43,8 +44,13 @@ func main() {
 	// Echo instance
 	e := echo.New()
 
+	// lf (os.File型)はWriteメソッド持ってるので、io.Writerを実装している→LoggerConfigのOutputにわたすことができる。
+	lf, _ := os.OpenFile("../test.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	defer lf.Close()
 	// Middleware
-	e.Use(middleware.Logger())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Output: lf,
+	}))
 	e.Use(middleware.Recover())
 
 	// Routes
